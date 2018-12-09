@@ -9,7 +9,7 @@ from crawler.settings import ES_SERVER, ES_USER_NAME, ES_PASSWORD, ES_CERT, REDI
     MONGO_DB, MONGO_USER, MONGO_PASS, REDIS_OTHER_DB
 import psycopg2
 import psycopg2.extensions
-import redis
+# import redis
 import time
 #
 
@@ -74,13 +74,13 @@ def write_ldf_reader(df, file_name):
 #     return es
 
 
-def get_redis_client(db=None):
-    pool = redis.ConnectionPool(host=CACHE_REDIS_HOST, port=REDIS_PORT, password=to_str(decrypt(REDIS_PASSWORD)))
-    if db:
-        pool = redis.ConnectionPool(host=CACHE_REDIS_HOST, port=REDIS_PORT, password=to_str(decrypt(REDIS_PASSWORD)),
-                                    db=REDIS_OTHER_DB)
-    rc = redis.Redis(connection_pool=pool)
-    return rc
+# def get_redis_client(db=None):
+#     pool = redis.ConnectionPool(host=CACHE_REDIS_HOST, port=REDIS_PORT, password=to_str(decrypt(REDIS_PASSWORD)))
+#     if db:
+#         pool = redis.ConnectionPool(host=CACHE_REDIS_HOST, port=REDIS_PORT, password=to_str(decrypt(REDIS_PASSWORD)),
+#                                     db=REDIS_OTHER_DB)
+#     rc = redis.Redis(connection_pool=pool)
+#     return rc
 
 
 def es_rest_call(es, url='/', method='GET', body=None):
