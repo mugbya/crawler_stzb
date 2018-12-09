@@ -17,10 +17,12 @@ class CrawlerPipeline(object):
     def __init__(self):
         self.gp_client = get_gp_connect()
         self.duplicates = {}
+        self.duplicates_user = {}
         self.data = []
 
     def open_spider(self, spider):
-        self.duplicates[spider.name] = []
+        self.duplicates[spider.name] = set()
+        self.duplicates_user[spider.name] = set()
 
     def close_spider(self, spider):
         self.save_data(spider, self.gp_client, self.duplicates[spider.name])
@@ -36,6 +38,7 @@ class CrawlerPipeline(object):
         '''
         if 'user' == spider.name:  # 用户
             if self.judge_user_exist(item):
+                # 这里并不能保存一次进来的两个数据相同
                 return
         if 'attend' == spider.name:  # 考勤
             if self.judge_attend_exist(item):
@@ -45,9 +48,14 @@ class CrawlerPipeline(object):
 
         if len(self.duplicates[spider.name]) >= 5000:
             self.save_data(spider, self.gp_client, self.duplicates[spider.name])
-            self.duplicates[spider.name] = []
+            self.duplicates[spider.name] = set()
 
-        self.duplicates[spider.name].append(item)
+        if 'user' == spider.name and item['username'] in self.duplicates_user[spider.name]:
+            return
+        else:
+            self.duplicates_user[spider.name].add(item['username'])
+
+        self.duplicates[spider.name].add(item)
 
     def save_data(self, spider, gp_client, item_list):
         # for data in data_list:
@@ -86,7 +94,9 @@ class CrawlerPipeline(object):
         return data_list
 
     def judge_user_exist(self, item):
-        if gp_select(self.gp_client, self.get_select_user_sql(item['username'])):
+        select_sql = self.get_select_user_sql(item['username'].strip())
+        res = gp_select(self.gp_client, select_sql)
+        if res:
             return True
         return False
 
