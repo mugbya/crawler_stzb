@@ -1,0 +1,4 @@
+scrapy
+redis
+redis-py
+pycrypto
