@@ -65,6 +65,9 @@ class AttendSpider(CrawlSpider):
         for node in node_list:
             now_time = datetime.now()
             task_date_str = node.css('em>span::attr(title)').extract_first()  # [:10]
+            if not task_date_str:
+                # 当没有按照上面采集到 时间格式时，表示已经至少是3天前了，而本程序每天跑，之前的数据已经有了，可以不再采集
+                continue
             task_date = datetime.strptime(task_date_str.strip(), '%Y-%m-%d %H:%M:%S')
             if now_time > task_date + timedelta(hours=TIEM_INTERVAL):
                 continue
