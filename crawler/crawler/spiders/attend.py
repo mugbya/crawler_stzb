@@ -89,12 +89,14 @@ class AttendSpider(CrawlSpider):
                     # 如果是正常出勤，但是没有截图，则不认为是有效数据，不抓取
                     continue
 
+                localhost = res_dict.get('localhost', '')
+
                 item = AttendItem()
 
                 item['username'] = username
-                item['localhost'] = res_dict.get('localhost', '')
+                item['localhost'] = localhost
                 item['attend_status'] = res_dict.get('attend_status', 1)
                 item['task_date'] = task_date_str
                 item['category'] = res_dict.get('category', 0)
-                item['id'] = task_date_str + username
+                item['id'] = localhost + username
                 yield item
