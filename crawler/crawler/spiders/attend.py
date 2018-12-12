@@ -85,7 +85,7 @@ class AttendSpider(CrawlSpider):
 
             if res_dict:
                 photo = node.css('div[class=pattl]')
-                if not photo or res_dict.get('attend_status') == 2:
+                if not photo or res_dict.get('attend_status') != 1:
                     # 如果是正常出勤，但是没有截图，则不认为是有效数据，不抓取
                     continue
 
